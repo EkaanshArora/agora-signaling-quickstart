@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <link rel="icon" type="image/svg+xml" href="/vite.svg" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Vite + TS</title>
+</head>
+
+<body>
+  <div id="app">
+    <h1>Chat Demo</h1>
+    <label for="AppID">AppID</label>
+    <input type="text" id="AppID" value="">
+    <label for="channel">Channel</label>
+    <input type="text" id="channel" value="test">
+    <label for="token">Token</label>
+    <input type="text" id="token" value="">
+    <label for="uid">UID</label>
+    <input type="text" id="uid" value="3000">
+    <!-- <label for="topic">Topic</label>
+    <input type="text" id="topic" value="topicOne"> -->
+    <br /><br />
+    <button id="join">Join</button>
+    <br /><br />
+    <div>Status: <span id="status">Not Connected</span></div>
+    <br />
+    <div id="messageContainer">
+
+    </div>
+    <br />
+    <label for="message">Message</label>
+    <input type="text" id="message">
+    <button id="send">Send Message</button>
+  </div>
+  <script type="module" src="/src/main.ts"></script>
+</body>
+
+</html>
