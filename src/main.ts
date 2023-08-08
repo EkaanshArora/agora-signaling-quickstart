@@ -1,8 +1,7 @@
 import "./style.css";
-import AgoraRTM, { RTMStreamChannel, type RTMClient } from "agora-rtm";
+import AgoraRTM, { type RTMClient } from "agora-rtm";
 
 let signalingEngine: RTMClient;
-let channel: RTMStreamChannel;
 
 const joinButton = document.getElementById("join") as HTMLButtonElement;
 const sendButton = document.getElementById("send") as HTMLButtonElement;
@@ -20,24 +19,15 @@ joinButton.onclick = async () => {
 		status: (e) => {
 			document.getElementById("status")!.innerText = e.state;
 		},
-		topic: (e) => {
-			console.log(e);
-		},
 	});
 	await signalingEngine.login();
 	signalingEngine.subscribe(channelName);
-
-	channel = signalingEngine.createStreamChannel(channelName);
-	await channel.join({ token: token });
-	await channel.joinTopic(channelName);
-	channel.subscribeTopic(channelName);
 };
 
 sendButton.onclick = async () => {
 	const { channelName, message } = getChannelAndMessage();
-	// await signalingEngine.publish(channelName, message);
-	// addMessageToDom("Me: " + message);
-	channel.publishTopicMessage(channelName, message);
+	await signalingEngine.publish(channelName, message);
+	addMessageToDom("Me: " + message);
 };
 
 /* utils */
