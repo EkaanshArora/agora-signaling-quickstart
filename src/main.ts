@@ -43,7 +43,7 @@ const getConfig = () => {
 		uid: parseInt(uid),
 		token: token,
 	};
-	if (!config.appId || !config.channelName || !config.uid || !config.token) {
+	if (!config.appId || !config.channelName) {
 		alert("Please input all the fields");
 		throw new Error("Please input all the fields");
 	}
