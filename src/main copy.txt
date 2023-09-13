@@ -1,0 +1,90 @@
+import "./style.css";
+import AgoraRTM, { type RTMClient } from "agora-rtm";
+
+let signalingEngine: RTMClient;
+
+const joinButton = document.getElementById("join") as HTMLButtonElement;
+const sendButton = document.getElementById("send") as HTMLButtonElement;
+const getPresenceButton = document.getElementById("getPresence") as HTMLButtonElement;
+const messageContainer = document.getElementById("messageContainer") as HTMLDivElement;
+
+joinButton.onclick = async () => {
+  const { appId, channelName, token, uid } = getConfig();
+  signalingEngine = new AgoraRTM.RTM(appId, String(uid), { token: token });
+  signalingEngine.addEventListener("message", (eventArgs) => {
+    addMessageToDom(`${eventArgs.publisher}: ${eventArgs.message}`);
+  });
+  signalingEngine.addEventListener("status", (e) => {
+    document.getElementById("status")!.innerText = e.state;
+  });
+  signalingEngine.addEventListener('TokenPrivilegeWillExpire', async () => {});
+  signalingEngine.addEventListener("presence", (e) => {
+    if (e.eventType === 'SNAPSHOT') {
+      e.snapshot?.forEach((user) => {
+        console.log(user);
+      });
+    } else { console.log(e); }
+  });
+  
+  await signalingEngine.login();
+  signalingEngine.subscribe(channelName);
+};
+
+sendButton.onclick = async () => {
+  const { channelName, message } = getChannelAndMessage();
+  await signalingEngine.publish(channelName, message);
+  addMessageToDom("Me: " + message);
+};
+
+getPresenceButton.onclick = async () => {
+  const { channelName } = getConfig();
+  signalingEngine.presence
+    .getOnlineUsers(channelName, "MESSAGE", {
+      includedState: true,
+      includedUserId: true,
+    })
+    .then((res) => {
+      console.log(res, res.nextPage);
+    })
+    .catch((e) => {
+      console.log(e);
+    });
+};
+
+/* utils */
+const getConfig = () => {
+  const AppID = (document.getElementById("AppID") as HTMLInputElement).value;
+  const channelName = (document.getElementById("channel") as HTMLInputElement)
+    .value;
+  const uid = (document.getElementById("uid") as HTMLInputElement).value;
+  const token = (document.getElementById("token") as HTMLInputElement).value;
+  const config = {
+    appId: AppID,
+    channelName: channelName,
+    uid: parseInt(uid),
+    token: token,
+  };
+  if (!config.appId || !config.channelName) {
+    alert("Please input all the fields");
+    throw new Error("Please input all the fields");
+  }
+  return config;
+};
+
+const getChannelAndMessage = () => {
+  const message = (
+    document.getElementById("message") as HTMLInputElement
+  ).value.trim();
+  const channelName = (document.getElementById("channel") as HTMLInputElement)
+    .value;
+  return {
+    message: message,
+    channelName: channelName,
+  };
+};
+
+const addMessageToDom = (message: string) => {
+  const messageRes = document.createElement("div");
+  messageRes.innerText = message as string;
+  messageContainer.appendChild(messageRes);
+};
