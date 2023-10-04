@@ -1,5 +1,5 @@
 import "./style.css";
-import AgoraRTM, { type RTMClient } from "agora-rtm-sdk";
+import AgoraRTM, { type RTMClient } from "agora-rtm";
 
 let signalingEngine: RTMClient;
 
@@ -9,10 +9,10 @@ const sendButton = document.getElementById("send") as HTMLButtonElement;
 joinButton.onclick = async () => {
   const { appId, channelName, token, uid } = getConfig();
   signalingEngine = new AgoraRTM.RTM(appId, String(uid), { token: token });
-  signalingEngine.on("message", (eventArgs) => {
+  signalingEngine.addEventListener("message", (eventArgs) => {
     addMessageToDom(`${eventArgs.publisher}: ${eventArgs.message}`);
   });
-  signalingEngine.on("status", (e) => {
+  signalingEngine.addEventListener("status", (e) => {
     document.getElementById("status")!.innerText = e.state;
   });
   await signalingEngine.login();
@@ -37,6 +37,7 @@ const getConfig = () => {
     uid: parseInt(uid.value),
     token: token.value,
   };
+  console.log(config);
   if (!config.appId || !config.channelName) {
     alert("Please input all the fields");
     throw new Error("Please input all the fields");

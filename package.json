@@ -13,6 +13,7 @@
     "vite": "^4.4.0"
   },
   "dependencies": {
+    "agora-rtm": "^2.1.5",
     "agora-rtm-sdk": "2.1.4-beta.0"
   }
 }
